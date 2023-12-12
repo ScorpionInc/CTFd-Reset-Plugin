@@ -1,0 +1,14 @@
+{% extends 'resetBtn.html' %}
+
+{% block resetbtnstyle %}
+.resetChallengeButton{
+	float: right !important;
+}
+{% endblock %}
+
+{% block resetbtnaction %}resetChallenge/{{ challenge.id }}{% endblock %}
+{% block resetbtnhidden%}
+	<input id="cid" name="cid" type="hidden" value="{{ challenge.id }}" />
+{% endblock %}
+
+{% block resetbtnform %}{% endblock %}

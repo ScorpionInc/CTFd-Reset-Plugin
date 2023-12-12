@@ -1,0 +1,5 @@
+{
+	"name": "CTFd Reset Challenge Plugin",
+	"author": "ScorpionInc",
+	"route": "/admin/plugins/resetChallenge"
+}

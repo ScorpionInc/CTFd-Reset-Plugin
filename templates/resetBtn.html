@@ -1,0 +1,40 @@
+{# TODO Move this into plugin's static assets. #}
+<style>
+.resetChallengeButton{
+	border: none;
+	border-radius: .25rem;
+	opacity: .5;
+	padding-left: .25em;
+	padding-right:.25em;
+	background: transparent;
+}
+.resetChallengeButton > img{
+	display: block;
+	width: 24px;
+}
+.resetChallengeButton > p{
+	position: absolute;
+	top: 0px;
+	font-size: x-small;
+	visibility: hidden;
+	opacity: 0;
+}
+.resetChallengeButton:hover > p{
+	visibility: visible;
+	opacity: 1;
+}
+{% block resetbtnstyle %}{% endblock %}
+</style>
+{% block resetbtn %}
+<form name="resetChallenge" method="POST" class="form-inline" action="{% block resetbtnaction %}{% endblock %}" accept-charset="utf-8">
+	<input id="nonce" name="nonce" type="hidden" value="{{ Session.nonce }}" />
+	<input id="uid" name="uid" type="hidden" value="{{ Session.id }}" />
+	{% block resetbtnhidden%}
+	{% endblock %}
+	<button type="submit" class="resetChallengeButton">
+		<img src="https://cdn-icons-png.flaticon.com/512/44/44426.png" />
+		<p>Reset</p>
+	</button>
+	{% block resetbtnform %}{% endblock %}
+</form>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block stylesheets %}
+{{ super() }}
+<style>
+#reset-yes-btn, #reset-no-btn{
+	padding-left: 25px;
+	padding-right: 25px;
+	font-size: 24px;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="jumbotron">
+	<div class="container text-center">
+		<h1>Do you want to reset all of your Challenges?</h1>
+	</div>
+</div>
+<div class="container text-center">
+	<div class="row">
+		<div class="col-md-6 offset-md-3">
+			<form class="form-inline" action="#" method="POST">
+				<input id="nonce" name="nonce" type="hidden" value="{{ Session.nonce }}" />
+				<input id="uid" name="uid" type="hidden" value="{{ Session.id }}" />
+				<button id="reset-yes-btn" name="reset-yes-btn" class="btn btn-primary" type="submit">
+					Yes
+				</button>
+				&nbsp;&nbsp;&nbsp;
+				<button id="reset-no-btn" name="reset-no-btn" class="btn btn-success" type="button" onclick="on_no_reset();">
+					No
+				</button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function on_no_reset(){
+	window.history.back();
+}
+</script>
+{% endblock %}

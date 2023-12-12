@@ -1,0 +1,20 @@
+{% extends 'resetBtn.html' %}
+
+{% block resetbtnstyle %}
+.category-header > h3{
+	float:left !important;
+}
+.resetChallengeButton{
+	float:right !important;
+}
+.category-challenges{
+	clear:both;
+}
+{% endblock %}
+
+{% block resetbtnaction %}resetChallenges{% endblock %}
+{% block resetbtnhidden%}
+	<input id="cid" name="cid" type="hidden" x-bind:value="category" />
+{% endblock %}
+
+{% block resetbtnform %}<div style="float:none;clear:both;" />{% endblock %}

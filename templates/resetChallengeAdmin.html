@@ -1,0 +1,171 @@
+{% extends 'admin/base.html' %}
+
+{% block stylesheets %}
+{{ super() }}
+<link rel="stylesheet" href="{{ assets }}css/resetBtn.css" />
+<link rel="stylesheet" href="{{ assets }}css/resetChallengeRulesTable.css" />
+<style>
+h3{
+	padding-right: 5px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron"><div class="container"><center>
+	<h1 style="text-align:center;">
+	{% trans %}resetChallenge Configuration Administration{% endtrans %}
+	</h1>
+</center></div></div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-4 offset-md-1">
+			<h3>Global plugin rules:</h3>
+			<div class="text-center">
+				<p>This provides a visual display for settings used globally by the plugin specified by the config file.</p>
+			</div>
+		</div>
+		<div class="col-md-6">
+			Enable Reset Counters: <span style="color:red;">False</span><br/>
+			Enable Reset Rules: <span style="color:green;">True</span><br/>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4 offset-md-1">
+			<h3>Reset Counters:</h3>
+			<div class="text-center">
+				<p>Displays the number of resets by User, Challenge, and Category.</p>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<small>TODO</small>
+		</div>
+	</div>
+	<div class="row">
+		<h3>Current Reset Rules:</h3>
+		<div class="text-center">
+			<p>These rules determine if a challenge or category is allowed to be reset.</p>
+			<p>Plugin follows rules in order of priority in Desc order.</p>
+			<p>Plugin is Default_Allow for unmatched requests.</p>
+			{% if rules.pages > 1 %}
+			<p class="text-muted">Page {{ rules.page }} of {{ rules.total }}</p>
+			<p>
+				{% if rules.page != 1 %}
+				<a href="{{ prev_page }}">&lt;&lt;&lt;</a>
+				{% endif %}
+				{% if rules.next_num %}
+				<a href="{{ next_page }}">&gt;&gt;&gt;</a>
+				{% endif %}
+			</p>
+			{% endif %}
+		</div>
+		<div class="divTable resetChallengeRulesTable">
+			<div class="divTableHeading"><div class="divTableRow">
+				<div class="divTableHead">Index:</div>
+				<div class="divTableHead">Priority:</div>
+				<div class="divTableHead">Type:</div>
+				<div class="divTableHead">Test:</div>
+				<div class="divTableHead" style="width: 35%;">Value:</div>
+				<div class="divTableHead">Action:</div>
+				<div class="divTableHead" style="width: 20%;white-space: nowrap;">Tasks:</div>
+			</div></div><!-- Table Header -->
+			<div class="divTableBody">
+				{% for r in rules.items %}
+				<div class="divTableRow">
+					<div class="divTableCell">{{ r.id }}</div>
+					<div class="divTableCell">{{ r.priority }}</div>
+					<div class="divTableCell">{{ r.type }}</div>
+					<div class="divTableCell">{{ r.test }}</div>
+					<div class="divTableCell">{{ r.value }}</div>
+					<div class="divTableCell" style="white-space: nowrap;">{{ r.action }}</div>
+					<div class="divTableCell">
+						<form class="form-inline" method="POST" action="#" autocomplete="off">
+							<input id="nonce" name="nonce" type="hidden" value="{{ Session.nonce }}" />
+							<input id="rid" name="rid" type="hidden" value="{{ r.id }}" />
+							<center style="width:100%;">
+							<button id="task" name="task" {% if loop.index == 1 %}type="button"{% else %}type="submit"{% endif %} value="priorityUp" class="resetChallengeButton">
+								<img src="https://uxwing.com/wp-content/themes/uxwing/download/arrow-direction/angle-circle-up-icon.png" class="{% if loop.index == 1 %}disabled{% endif %}" />
+								<p>Increases Rule Priority</p>
+							</button>
+							<button id="task" name="task" {% if loop.last %}type="button"{% else %}type="submit"{% endif %} value="priorityDown" class="resetChallengeButton">
+								<img src="https://uxwing.com/wp-content/themes/uxwing/download/arrow-direction/angle-circle-down-icon.png" class="{% if loop.last %}disabled{% endif %}" />
+								<p>Decreases Rule Priority</p>
+							</button>
+							<button id="task" name="task" type="submit" value="delete" class="resetChallengeButton">
+								<img src="https://uxwing.com/wp-content/themes/uxwing/download/user-interface/red-trash-can-icon.png" class="" />
+								<p>Removes Rules</p>
+							</button></center>
+						</form>
+					</div>
+				</div>
+				{% endfor %}
+			</div><!-- Table Body-->
+			<div class="divTableFoot tableFootStyle">
+				<div class="divTableCell" style="display:block;">DEFAULT ALLOW</div>
+			</div><!-- Table Footer-->
+		</div>
+	</div>
+	<div class="row">&nbsp;</div>
+	<div class="row">
+		<h3>Add New Rule:</h3>
+		<form action="#" method="POST" class="text-center form-inline" autocomplete="off">
+			<input id="nonce" name="nonce" type="hidden" value="{{ Session.nonce }}" />
+			<input id="task" name="task" type="hidden" value="add" />
+			<div class="divTable resetChallengeRulesTable">
+				<div class="divTableHeading"><div class="divTableRow">
+					<div class="divTableHead">Priority:</div>
+					<div class="divTableHead">Type:</div>
+					<div class="divTableHead">Test:</div>
+					<div class="divTableHead">Value:</div>
+					<div class="divTableHead">Action:</div>
+				</div></div><!-- Table Header-->
+				<div class="divTableBody"><div class="divTableRow">	
+					<div class="divTableCell">
+						{# SQLite3 max Integer value (Signed-8i) from: http://www.sqlite.org/datatype3.html #}
+						<input id="newPriority" name="newPriority" type="number" min="0" max="{{ max_priority }}" value="0" inputmode="numeric" pattern="\d*" class="" style="" required />
+					</div>
+					<div class="divTableCell">
+						<select id="newType" name="newType" required>
+							{% for type in type_names %}
+							<option value="{{ type }}">{{ type }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="divTableCell">
+						<select id="newTest" name="newTest" required>
+							{% for test in test_names %}
+							<option value="{{ test }}">{{ test }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					<div class="divTableCell">
+						<input id="newValue" name="newValue" style="width:90%;" required />
+					</div>
+					<div class="divTableCell">
+						<select id="newAction" name="newAction" required>
+							{# loop.index == 3 should be Deny which is selected as the default option. #}
+							{% for action in action_names %}
+							<option value="{{ action }}"{% if loop.index == 3 %} selected="selected"{% endif %}>{{ action }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div></div><!-- Table Body -->
+				<div class="divTableFoot tableFootStyle">
+					<div class="divTableCell" style="display:block;">
+						<input type="submit" value="Add Rule"/>
+					</div>
+				</div><!-- Table Footer -->
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}
+
+{% block scripts%}
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/echarts.bundle.js') }}"></script>
+	<script defer src="{{ url_for('views.themes', theme='admin', path='js/graph.js') }}"></script>
+{% endblock %}
+
+{% block entrypoint %}
+	<script defer src="{{ assets }}js/resetChallengeAdmin.js"></script>
+{% endblock %}
